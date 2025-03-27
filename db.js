@@ -1,8 +1,8 @@
 const Product = require('./product-model.js');
 const { v4: uuidv4 } = require('uuid');
 
-userName = "ruba@mindolife.com"
-userPassword = "1q2w3e4r"
+userName = "hosen"
+userPassword = "hosen"
 
 productsDB = [
     {

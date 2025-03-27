@@ -46,23 +46,29 @@ router.put('/products/:id', (req, res) => {
 
 router.get('/products', (req, res) => {
     const authHeader = req.headers['authorization'];
-    console.log("AUTH IS "  +authHeader)
-    if(authHeader == undefined || currentToken == null){
-        res.status(401).json({ msg: "Unauthorized"})
-    }
-    const token = authHeader.split(' ')[1];
-    if(currentToken != token){
-        res.status(401).json({ msg: "Unauthorized"})
+    console.log("AUTH IS " + authHeader);
+    
+    // Check if the Authorization header exists
+    if (!authHeader || currentToken == null) {
+      return res.status(401).json({ msg: "Unauthorized" });
     }
     
-    if(req.query.filter != undefined  || req.query.sort != undefined){
-        products = getFilteredProducts(req.query.filter, req.query.sort)
-    }else{
-        products = getAllProducts(req.query.filter)
+    // Check the header format ("Bearer <token>")
+    const parts = authHeader.split(' ');
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
+      return res.status(401).json({ msg: "Unauthorized" });
     }
-    res.status(200).json({ data: products})
-});
-
+    
+    const token = parts[1];
+    if (currentToken !== token) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+    
+    // Continue processing the request if authorized
+    const products = getAllProducts();
+    res.status(200).json({ data: products });
+  });
+  
 router.get('/products/:id', (req, res) => {
     const authHeader = req.headers['authorization'];
     if(authHeader == undefined || currentToken == null){
